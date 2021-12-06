@@ -16,11 +16,15 @@ use App\Http\Controllers\CrudController;
 Route::get('/', function () {
     return view('welcome');
 });
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+//For Crud Applicaion
 
 Route::get('/crud',[CrudController::class,'showData']);
 Route::get('/crud/add_data',[CrudController::class,'addData']);
 Route::post('/crud/store_data',[CrudController::class,'storeData']);
 
-Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+//End Crud Application

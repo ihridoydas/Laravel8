@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 
 use App\Models\Crud;
+use Session;
 
 class CrudController extends Controller
 {
    
     public function showData(){
-        return view('crud.show_data');
+
+        $showData = Crud::all();
+        return view('crud.show_data',compact('showData'));
     }
 
     public function addData(){
@@ -21,13 +24,19 @@ class CrudController extends Controller
 
         $rules =[
 
-            'name'=>'required|max:10',
+            'name'=>'required|max:20',
             'email'=>'required|email',
         ];
     $this->validate($request,$rules);
 
     $crud = new Crud();
 
-        return $request->all();
+    $crud->name = $request->name;
+    $crud->email= $request->email;
+    $crud->save();
+
+    Session::flash('msg','Data successfully added');
+
+        return redirect()->back();
     }
 }

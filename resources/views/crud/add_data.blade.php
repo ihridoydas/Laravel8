@@ -16,7 +16,7 @@
 
     <div class="container">
         <a href="{{url('/crud')}}" class="btn btn-primary my-3">SHOW DATA</a>
-        
+
         @if ($errors->any())
                 <div class="alert alert-danger">
                     <ul>
@@ -25,6 +25,10 @@
                         @endforeach
                     </ul>
                 </div>
+        @endif
+
+        @if(Session::has('msg'))
+            <p class="alert alert-success">{{Session::get('msg')}}</p>
         @endif
 
 
