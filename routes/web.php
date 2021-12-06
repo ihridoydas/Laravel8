@@ -26,5 +26,10 @@ Route::get('/crud',[CrudController::class,'showData']);
 Route::get('/crud/add_data',[CrudController::class,'addData']);
 Route::post('/crud/store_data',[CrudController::class,'storeData']);
 
+//Edit Action
+Route::get('/crud/edit_data/{id}',[CrudController::class,'editData']);
+Route::post('/crud/update_data/{id}',[CrudController::class,'updateData']);
+Route::get('/crud/delete_data/{id}',[CrudController::class,'deleteData']);
+
 
 //End Crud Application

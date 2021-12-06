@@ -30,17 +30,17 @@
       
 
 
-        <form action="{{url('/crud/store_data')}}" method="POST">
+        <form action="{{url('/crud/update_data/'.$editData->id)}}" method="POST">
             @csrf
 
             <div class="form-group">
                 <label for="">Name:</label>
-                <input type="text" class="form-control" name="name" placeholder="Enter your name">
+                <input type="text" class="form-control" name="name" value="{{$editData->name}}" placeholder="Enter your name">
             </div>
 
             <div class="form-group">
                 <label for="">Email:</label>
-                <input type="email" class="form-control" name="email" placeholder="Enter your Email">
+                <input type="email" class="form-control" name="email" value="{{$editData->email}}" placeholder="Enter your Email">
             </div>
             <input type="submit" class="btn btn-primary my-3" value="Submit">
         </form>

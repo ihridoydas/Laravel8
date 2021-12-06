@@ -12,7 +12,9 @@ class CrudController extends Controller
    
     public function showData(){
 
-        $showData = Crud::all();
+        //$showData = Crud::all();
+
+        $showData = Crud::simplePaginate(5);
         return view('crud.show_data',compact('showData'));
     }
 
@@ -37,6 +39,44 @@ class CrudController extends Controller
 
     Session::flash('msg','Data successfully added');
 
-        return redirect()->back();
+        return redirect('/crud');
+    }
+    public function editData($id=null){
+
+        $editData = Crud::find($id);
+
+        return view('crud/edit_data',compact('editData'));
+    }
+
+    //Update Data in Crud Application
+
+    public function updateData(Request $request,$id){
+
+        $rules =[
+
+            'name'=>'required|max:20',
+            'email'=>'required|email',
+        ];
+    $this->validate($request,$rules);
+
+    $crud =Crud::find($id);
+
+    $crud->name = $request->name;
+    $crud->email= $request->email;
+    $crud->save();
+
+    Session::flash('msg','Data successfully Updated');
+
+        return redirect('/crud');
+    }
+
+    public function deleteData($id){
+        $deleteData= Crud::find($id);
+
+        $deleteData->delete();
+
+        Session::flash('msg','Data successfully Deleted');
+        return redirect('/crud');
+
     }
 }
