@@ -8,7 +8,9 @@ use App\Models\Crud;
 use Session;
 
 class CrudController extends Controller
+
 {
+    //Data Show in Crud Application
    
     public function showData(){
 

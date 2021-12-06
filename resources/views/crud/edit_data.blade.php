@@ -42,7 +42,7 @@
                 <label for="">Email:</label>
                 <input type="email" class="form-control" name="email" value="{{$editData->email}}" placeholder="Enter your Email">
             </div>
-            <input type="submit" class="btn btn-primary my-3" value="Submit">
+            <input type="submit"  class="btn btn-primary my-3" value="Update">
         </form>
 
 
