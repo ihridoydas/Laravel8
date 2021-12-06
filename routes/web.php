@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\CrudController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -16,6 +16,10 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/crud',[CrudController::class,'showData']);
+Route::get('/crud/add_data',[CrudController::class,'addData']);
+Route::post('/crud/store_data',[CrudController::class,'storeData']);
 
 Auth::routes();
 
