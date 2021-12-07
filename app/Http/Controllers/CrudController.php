@@ -80,5 +80,7 @@ class CrudController extends Controller
         Session::flash('msg','Data successfully Deleted');
         return redirect('/crud');
 
+        
+
     }
 }

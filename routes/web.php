@@ -33,3 +33,7 @@ Route::get('/crud/delete_data/{id}',[CrudController::class,'deleteData']);
 
 
 //End Crud Application
+
+//Social Login System
+
+//Route::get('/social',[SocialControler::class,'FacebookData']);
