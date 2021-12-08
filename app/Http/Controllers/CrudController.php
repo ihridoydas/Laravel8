@@ -11,76 +11,134 @@ class CrudController extends Controller
 
 {
     //Data Show in Crud Application
-   
-    public function showData(){
+
+    public function showData()
+    {
 
         //$showData = Crud::all();
 
         $showData = Crud::simplePaginate(5);
-        return view('crud.show_data',compact('showData'));
+        return view('crud.show_data', compact('showData'));
     }
 
-    public function addData(){
+    public function addData()
+    {
         return view('crud.add_data');
     }
 
-    public function storeData(Request $request){
+    public function storeData(Request $request)
+    {
 
-        $rules =[
+        $rules = [
 
-            'name'=>'required|max:20',
-            'email'=>'required|email',
+            'name' => 'required|max:20',
+            'email' => 'required|email',
         ];
-    $this->validate($request,$rules);
+        $this->validate($request, $rules);
 
-    $crud = new Crud();
+        $crud = new Crud();
 
-    $crud->name = $request->name;
-    $crud->email= $request->email;
-    $crud->save();
+        $crud->name = $request->name;
+        $crud->email = $request->email;
+        $crud->save();
 
-    Session::flash('msg','Data successfully added');
+        Session::flash('msg', 'Data successfully added');
 
         return redirect('/crud');
     }
-    public function editData($id=null){
+    public function editData($id = null)
+    {
 
         $editData = Crud::find($id);
 
-        return view('crud/edit_data',compact('editData'));
+        return view('crud/edit_data', compact('editData'));
     }
 
     //Update Data in Crud Application
 
-    public function updateData(Request $request,$id){
+    public function updateData(Request $request, $id)
+    {
 
-        $rules =[
+        $rules = [
 
-            'name'=>'required|max:20',
-            'email'=>'required|email',
+            'name' => 'required|max:20',
+            'email' => 'required|email',
         ];
-    $this->validate($request,$rules);
+        $this->validate($request, $rules);
 
-    $crud =Crud::find($id);
+        $crud = Crud::find($id);
 
-    $crud->name = $request->name;
-    $crud->email= $request->email;
-    $crud->save();
+        $crud->name = $request->name;
+        $crud->email = $request->email;
+        $crud->save();
 
-    Session::flash('msg','Data successfully Updated');
+        Session::flash('msg', 'Data successfully Updated');
 
         return redirect('/crud');
     }
 
-    public function deleteData($id){
-        $deleteData= Crud::find($id);
+    public function deleteData($id)
+    {
+        $deleteData = Crud::find($id);
 
         $deleteData->delete();
 
-        Session::flash('msg','Data successfully Deleted');
+        Session::flash('msg', 'Data successfully Deleted');
         return redirect('/crud');
+    }
 
-        
 
+    //API practise for Crud Table
+
+    public function GetCrudApi()
+    {
+
+        //this Crud is Model name
+        // return Crud::all();
+
+
+        // Get Method in API 
+        try {
+
+            $cruds = Crud::all();
+            return \response([
+
+                'cruds' => $cruds,
+                'message' => 'success'
+            ]);
+        } catch (execption $ex) {
+            return \response ([
+                'messege'=>$ex->getMessage(),
+
+            ]);
+        }
+       
+    }
+         //POST Method in API (Crud table in database)
+    public function PostCrudApi(Request $request){
+
+        try{
+            $cruds = new Crud();
+
+            $cruds->name=$request-> name;
+            $cruds->email=$request->email;
+            $cruds->created_at=$request->created_at;
+            $cruds->updated_at=$request->updated_at;
+
+            $cruds->save();
+            return \response([
+
+               'message'=>'Crud Created',
+               'Crud'=>$cruds,
+
+            ]);
+
+        }catch(Exception $ex){
+
+            return \response([
+                'message'=>$ex->getMessage(),
+            ]);
+        }
+            
     }
 }
