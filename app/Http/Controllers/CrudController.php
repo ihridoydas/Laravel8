@@ -182,6 +182,31 @@ class CrudController extends Controller
 
     }
 
+    //Delete resposne in API
+
+    public function DeleteCrudApi(Request $request,$id){
+
+        try{
+            $deleteCrud = Crud::find($id);
+            $deleteCrud->delete();
+    
+            return \response([
+    
+                'message'=>'Data Sucessfully Deleted'
+            ]);
+
+        }catch(Exception $ex){
+        return \response([
+
+            'message'=> $ex->getMessage(),
+        ]);
+
+
+        }
+        
+       
+    }
+
 
     //End API Practise 
 }
