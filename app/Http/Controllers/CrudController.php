@@ -87,19 +87,27 @@ class CrudController extends Controller
         return redirect('/crud');
     }
 
+    //End Crud Application
 
-    //API practise for Crud Table
 
+
+
+
+
+    // Start API practise for Crud Table
+
+
+     // Get Method in API 
     public function GetCrudApi()
     {
-
-        //this Crud is Model name
+         //this Crud is Model name
         // return Crud::all();
 
-
-        // Get Method in API 
+       
         try {
 
+
+             //this Crud is Model name
             $cruds = Crud::all();
             return \response([
 
@@ -114,6 +122,7 @@ class CrudController extends Controller
         }
        
     }
+
          //POST Method in API (Crud table in database)
     public function PostCrudApi(Request $request){
 
@@ -124,11 +133,11 @@ class CrudController extends Controller
             $cruds->email=$request->email;
             $cruds->created_at=$request->created_at;
             $cruds->updated_at=$request->updated_at;
-
             $cruds->save();
+
             return \response([
 
-               'message'=>'Crud Created',
+               'message'=>'Data Created Sucessfully',
                'Crud'=>$cruds,
 
             ]);
@@ -141,4 +150,38 @@ class CrudController extends Controller
         }
             
     }
+
+    //Put / Update Method API
+
+    public function PutCrudApi(Request $request,$id){
+
+        try{
+            $cruds = Crud::find($id);
+
+
+            $cruds->name=$request-> name;
+            $cruds->email=$request->email;
+            $cruds->created_at=$request->created_at;
+            $cruds->updated_at=$request->updated_at;
+            $cruds->update();
+
+            return \response([
+
+                'Message'=>'Data Update Sucessfully',
+                'Cruds'=>$cruds,
+            ]);
+             
+
+        }catch(\Throwable $th){
+            return \response([
+
+                'Message'=> $th->getMessage(),
+            ]);
+
+        }
+
+    }
+
+
+    //End API Practise 
 }

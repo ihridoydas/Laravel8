@@ -32,4 +32,5 @@ Route::get('/getcrud_api',[CrudController::class,'GetCrudApi']);
     //POST Method 
 Route::post('/postcrud_api',[CrudController::class,'PostCrudApi']);
 
-
+    //PUT Method
+Route::put('putcrud_api/{id}',[CrudController::class,'PutCrudApi']);
