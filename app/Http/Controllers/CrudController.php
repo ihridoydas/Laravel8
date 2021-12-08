@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 
 use App\Models\Crud;
 use Session;
+use Illuminate\Support\Facades\Validator;
+
 
 class CrudController extends Controller
 
@@ -102,11 +104,8 @@ class CrudController extends Controller
     {
          //this Crud is Model name
         // return Crud::all();
-
        
         try {
-
-
              //this Crud is Model name
             $cruds = Crud::all();
             return \response([
@@ -126,13 +125,29 @@ class CrudController extends Controller
          //POST Method in API (Crud table in database)
     public function PostCrudApi(Request $request){
 
+     
+        //Valitor form api //use Validator
+
+        $validator = Validator::make($request->all(),[
+            'name' => 'required|max:12',
+            'email' => 'required|email',
+            
+        ]);
+
+        if($validator->fails()){
+
+            return \response([
+                'message'=> $validator->errors()->all(),
+            ]);
+
+        }
+
         try{
             $cruds = new Crud();
 
             $cruds->name=$request-> name;
             $cruds->email=$request->email;
-            $cruds->created_at=$request->created_at;
-            $cruds->updated_at=$request->updated_at;
+          
             $cruds->save();
 
             return \response([
@@ -161,8 +176,6 @@ class CrudController extends Controller
 
             $cruds->name=$request-> name;
             $cruds->email=$request->email;
-            $cruds->created_at=$request->created_at;
-            $cruds->updated_at=$request->updated_at;
             $cruds->update();
 
             return \response([
@@ -196,10 +209,12 @@ class CrudController extends Controller
             ]);
 
         }catch(Exception $ex){
-        return \response([
+                return \response([
 
-            'message'=> $ex->getMessage(),
-        ]);
+                // 'message'=> $ex->getMessage(),
+
+                'message'=>'ERROR Please check information',
+                ]);
 
 
         }
