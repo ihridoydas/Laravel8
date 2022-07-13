@@ -1,66 +1,215 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400"></a></p>
+# Laravel 9.0（PHP-8,phpmyadmin,Mariadb,Nginx）Dockerコンテナにインストール
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## 1. Dockerアプリケーションをにインストールします
+``` https://www.docker.com/get-started/ ```
 
-## About Laravel
+### Docker Content Trust（DCT）を有効にする
+#### ~/.bashrc や ~/.zshrc に追記する。
+``` export DOCKER_CONTENT_TRUST=1 ```
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## コンテナ構成
+```
+├── app
+├── web
+└── db  
+```
+### コマンドでLaravelプルゼクトPullする
+```
+[mac] $ git clone git@github.com:ucan-lab/docker-laravel.git
+[mac] $ cd docker-laravel
+[mac] $ make create-project
+```
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+``` http://localhost/ ```
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+```
 
-## Learning Laravel
+# コンテナを作成する
+[mac] $ make up
+[mac] $ docker compose up -d
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+# コンテナを破棄する
+[mac] $ make down
+[mac] $ docker compose down
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 1500 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+# コンテナを再作成する
+[mac] $ make restart
+[mac] $ docker compose down && docker compose up -d
 
-## Laravel Sponsors
+# コンテナ、イメージ、ボリュームを破棄する
+[mac] $ make destroy
+[mac] $ docker compose down --rmi all --volumes
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+# コンテナ、ボリュームを破棄する
+[mac] $ make destroy-volumes
+[mac] $ docker compose down --volumes
 
-### Premium Partners
+# コンテナ、イメージ、ボリュームを破棄して再構築
+[mac] $ make remake
+[mac] $ docker compose down --rmi all --volumes && \
+    docker compose up -d --build && \
+    docker compose exec app composer install && \
+    docker compose exec app cp .env.example .env && \
+    docker compose exec app php artisan key:generate && \
+    docker compose exec app php artisan storage:link && \
+    docker compose exec app php artisan migrate:fresh --seed
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[CMS Max](https://www.cmsmax.com/)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
-- **[Romega Software](https://romegasoftware.com)**
+```
 
-## Contributing
+## 推奨開発パッケージのインストール (必要あれば)
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```
+[mac] $ make install-recommend-packages
+```
 
-## Code of Conduct
+## Laravelのマイグレーションを実行する
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+```
+# migrate
+[mac] $ make migrate
+[mac] $ docker compose exec app php artisan migrate
 
-## Security Vulnerabilities
+# migrate:fresh
+[mac] $ make fresh
+[mac] $ docker compose exec app php artisan migrate:fresh --seed
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+# db:seed
+[mac] $ make seed
+[mac] $ docker compose exec app php artisan db:seed
+```
 
-## License
+### PhpMyAdmin 追加するとき
+```
+phpmyadmin:
+    depends_on:
+        - db
+    image: phpmyadmin/phpmyadmin
+    environment:
+        - PMA_HOST=db
+        - PMA_PORT=3306
+    ports:
+        - 8001:80
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+```
+### MariaDB 追加するとき
+```
+db:
+    # build:
+    #   context: .
+    # dockerfile: ./infra/docker/mysql/Dockerfile
+    image: 'mariadb:latest'
+    ports:
+      - target: 3306
+        published: ${DB_PUBLISHED_PORT:-3306}
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: volume
+        source: db-store
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-laravel}
+      - MYSQL_USER=${DB_USERNAME:-phper}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-secret}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-secret}
+
+```
+
+### ~infra/docker/mysql/Dockerfile ファイルの変更必要があります
+#### Dockerfile
+
+```
+FROM mariadb:latest 
+#mysql/mysql-server:8.0
+
+ENV TZ=UTC
+
+COPY ./infra/docker/mysql/my.cnf /etc/my.cnf
+
+```
+# docker.compose.yml ファイル
+```
+version: "3.9"
+volumes:
+  db-store:
+  psysh-store:
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./infra/docker/php/Dockerfile
+      target: ${APP_BUILD_TARGET:-development}
+    volumes:
+      - type: bind
+        source: ./src
+        target: /data
+      - type: volume
+        source: psysh-store
+        target: /root/.config/psysh
+        volume:
+          nocopy: true
+    environment:
+      - APP_DEBUG=${APP_DEBUG:-true}
+      - APP_KEY=${APP_KEY:-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX}
+      - APP_ENV=${APP_ENV:-local}
+      - APP_URL=${APP_URL:-http://localhost}
+      - LOG_CHANNEL=${LOG_CHANNEL:-stderr}
+      - LOG_STDERR_FORMATTER=${LOG_STDERR_FORMATTER:-Monolog\Formatter\JsonFormatter}
+      - DB_CONNECTION=${DB_CONNECTION:-mysql}
+      - DB_HOST=${DB_HOST:-db}
+      - DB_PORT=${DB_PORT:-3306}
+      - DB_DATABASE=${DB_DATABASE:-laravel}
+      - DB_USERNAME=${DB_USERNAME:-phper}
+      - DB_PASSWORD=${DB_PASSWORD:-secret}
+
+  web:
+    build:
+      context: .
+      dockerfile: ./infra/docker/nginx/Dockerfile
+    ports:
+      - target: 80
+        published: ${WEB_PUBLISHED_PORT:-80}
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: bind
+        source: ./src
+        target: /data
+
+  db:
+    # build:
+    #   context: .
+    # dockerfile: ./infra/docker/mysql/Dockerfile
+    image: 'mariadb:latest'
+    ports:
+      - target: 3306
+        published: ${DB_PUBLISHED_PORT:-3306}
+        protocol: tcp
+        mode: host
+    volumes:
+      - type: volume
+        source: db-store
+        target: /var/lib/mysql
+        volume:
+          nocopy: true
+    environment:
+      - MYSQL_DATABASE=${DB_DATABASE:-laravel}
+      - MYSQL_USER=${DB_USERNAME:-phper}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-secret}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD:-secret}
+
+  phpmyadmin:
+    depends_on:
+        - db
+    image: phpmyadmin/phpmyadmin
+    environment:
+        - PMA_HOST=db
+        - PMA_PORT=3306
+    ports:
+        - 8001:80
+  ```
+
+  ##### Note: エラーが出たらDockerコンテナとヴォリューム削除しても一度やり直し
+
