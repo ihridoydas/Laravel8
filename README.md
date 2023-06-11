@@ -5,7 +5,7 @@
 
 ### Docker Content Trust（DCT）を有効にする
 #### ~/.bashrc や ~/.zshrc に追記する。
-``` export DOCKER_CONTENT_TRUST=1 ```
+``` export DOCKER_CONTENT_TRUST=1 ``` 
 
 ## コンテナ構成
 ```
